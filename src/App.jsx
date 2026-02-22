@@ -46,17 +46,39 @@ export default function App() {
     if (!nextPage) return;
     const t = setTimeout(() => {
       setPage(nextPage); setNextPage(null);
-      window.scrollTo({ top: 0, behavior: 'instant' });
+      const scrollTarget = window.__scrollTarget;
+      window.__scrollTarget = null;
+      if (scrollTarget) {
+        /* Scroll to section after page renders */
+        setTimeout(() => {
+          const el = document.getElementById(scrollTarget);
+          if (el) el.scrollIntoView({ behavior: 'smooth' });
+          else window.scrollTo({ top: 0, behavior: 'instant' });
+        }, 100);
+      } else {
+        window.scrollTo({ top: 0, behavior: 'instant' });
+      }
       setTimeout(() => setLoading(false), 220);
     }, 480);
     return () => clearTimeout(t);
   }, [nextPage]);
 
-  const navigate = (p) => {
-    if (p === page) { setMobileOpen(false); return; }
+  const navigate = (p, scrollTarget) => {
+    if (p === page && !scrollTarget) { setMobileOpen(false); return; }
+    if (p === page && scrollTarget) {
+      /* Already on the target page — just scroll */
+      setMobileOpen(false);
+      setTimeout(() => {
+        const el = document.getElementById(scrollTarget);
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }, 50);
+      return;
+    }
     setMobileOpen(false);
     setLoading(true);
     setNextPage(p);
+    /* Store scroll target so we can scroll after page transition */
+    if (scrollTarget) window.__scrollTarget = scrollTarget;
   };
 
   /* Pages that DON'T have their own hero — need the nav spacer div */

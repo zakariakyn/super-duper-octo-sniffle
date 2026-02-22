@@ -37,10 +37,11 @@ export default function HeroSlider({ navigate }) {
 
   return (
     <>
-      {/* Full-screen: 100dvh on mobile, 100svh on desktop */}
+      {/* Full-screen: account for fixed nav bar height */}
       <div
         style={{
-          height: '100svh',
+          height: 'calc(100svh - var(--nav-h, 72px))',
+          marginTop: 'var(--nav-h, 72px)',
           position: 'relative', overflow: 'hidden',
         }}
         onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}
@@ -65,7 +66,7 @@ export default function HeroSlider({ navigate }) {
           position: 'relative', zIndex: 2, height: '100%',
           display: 'flex', flexDirection: 'column',
           alignItems: 'center', justifyContent: 'center', textAlign: 'center',
-          padding: '0 2rem', paddingTop: '72px', /* push below nav */
+          padding: '0 2rem',
           opacity: fading ? 0 : 1, transition: 'opacity 0.35s ease',
         }}>
           <div style={{ fontSize: '0.58rem', letterSpacing: '0.55em', textTransform: 'uppercase', color: GOLD, marginBottom: '1.2rem', fontWeight: 600 }}>

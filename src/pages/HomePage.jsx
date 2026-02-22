@@ -13,26 +13,26 @@ export default function HomePage({ navigate }) {
 
       {/* ── Events — Canva overlap style ─────────────────── */}
       {/* 
-        Soirée  → image LEFT  overlaps gold panel RIGHT   (odd  = default)
-        Mariage → gold panel LEFT  overlaps image RIGHT   (even = reversed CSS)
-        The user asked to change Mariage picture position so we force both
-        to have image on LEFT by giving Mariage class "event-card force-normal"
-        and overriding nth-child even rule.
+        Both Soirée and Mariage use the same unified design language:
+        same typography, color palette, spacing, buttons, borders,
+        hover effects, and image filtering/overlay for visual consistency.
+        Both cards force image-left layout (event-card-normal).
       */}
-      <div className="events-grid">
+      <div id="events-section" className="events-grid">
         {[
           {
             title: 'Soirée', img: IMAGES.soiree, page: 'soiree',
             text: 'Des soirées inoubliables conçues avec passion et créativité pour vous offrir une expérience unique et mémorable.',
+            forceNormal: true,
           },
           {
             title: 'Mariage', img: IMAGES.mariage, page: 'mariage',
             text: 'Votre mariage de rêve réalisé avec élégance. Chaque détail soigneusement pensé pour que ce jour soit parfait.',
-            forceNormal: true,   // ← both images on the LEFT side
+            forceNormal: true,
           },
         ].map((ev, i) => (
           <ScrollReveal key={i} delay={i * 100}>
-            <div className={`event-card${ev.forceNormal ? ' event-card-normal' : ''}`}>
+            <div className="event-card event-card-normal">
               <div className="event-image">
                 <img src={ev.img} alt={ev.title} />
               </div>
@@ -40,7 +40,6 @@ export default function HomePage({ navigate }) {
                 <div className="event-info-label">Amine Art Events</div>
                 <h3>{ev.title}</h3>
                 <p>{ev.text}</p>
-                {/* Prominent CTA button */}
                 <button className="btn-primary" style={{ marginTop: '0.5rem' }} onClick={() => navigate(ev.page)}>
                   Découvrir {ev.title} →
                 </button>
@@ -51,7 +50,7 @@ export default function HomePage({ navigate }) {
       </div>
 
       {/* ── Services ── */}
-      <div style={{ background: '#faf7f2', padding: '6rem 0 5rem' }}>
+      <div id="services-section" style={{ background: '#faf7f2', padding: '6rem 0 5rem' }}>
         <div className="section" style={{ paddingTop: 0, paddingBottom: '2rem' }}>
           <ScrollReveal>
             <div className="section-label">Notre expertise</div>
@@ -92,7 +91,7 @@ export default function HomePage({ navigate }) {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(260px,1fr))', gap: '1.5rem' }}>
             {TESTIMONIALS.slice(0, 3).map((t, i) => (
               <ScrollReveal key={i} delay={i * 90}>
-                <div style={{ background: '#fff', padding: '2rem', borderLeft: `3px solid ${GOLD}`, border: '1px solid rgba(184,146,42,0.12)', borderLeft: `3px solid ${GOLD}`, boxShadow: '0 4px 20px rgba(0,0,0,0.04)', transition: 'transform 0.3s, box-shadow 0.3s' }}
+                <div style={{ background: '#fff', padding: '2rem', border: '1px solid rgba(184,146,42,0.12)', borderLeft: `3px solid ${GOLD}`, boxShadow: '0 4px 20px rgba(0,0,0,0.04)', transition: 'transform 0.3s, box-shadow 0.3s' }}
                   onMouseEnter={e => { e.currentTarget.style.transform='translateY(-4px)'; e.currentTarget.style.boxShadow='0 12px 36px rgba(0,0,0,0.09)'; }}
                   onMouseLeave={e => { e.currentTarget.style.transform='none'; e.currentTarget.style.boxShadow='0 4px 20px rgba(0,0,0,0.04)'; }}
                 >

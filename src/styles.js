@@ -478,7 +478,7 @@ export const globalStyles = `
     :root { --nav-h-mobile: 60px; }
     .mobile-menu { top: 60px; }
 
-    .hero-fullscreen { height: calc(100dvh); }
+    .hero-fullscreen { height: calc(100dvh - var(--nav-h-mobile, 60px)); }
 
     .events-grid { padding: 3rem 1.5rem; gap: 3rem; }
     .event-card { grid-template-columns: 1fr !important; min-height: auto; }

@@ -168,7 +168,7 @@ export default function GallerySlider({ slides = [], interval = 3800 }) {
         onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}
         style={{ userSelect: 'none' }}
       >
-        <div onClick={() => setLightbox(current)} style={{ position: 'relative', overflow: 'hidden', aspectRatio: '16/9', background: '#111', cursor: 'zoom-in' }}>
+        <div onClick={() => setLightbox(current)} style={{ position: 'relative', overflow: 'hidden', aspectRatio: '16/9', maxHeight: 'calc(100vh - var(--nav-h, 72px) - 80px)', background: '#111', cursor: 'zoom-in' }}>
           {slides.map((sl, i) => (
             <div key={i} style={{ position: 'absolute', inset: 0, opacity: i === current ? 1 : 0, transition: 'opacity 0.7s ease' }}>
               <img src={sl.img} alt={sl.label || ''} style={{ width: '100%', height: '100%', objectFit: 'cover', transform: i === current ? 'scale(1.04)' : 'scale(1)', transition: 'transform 7s ease' }} />

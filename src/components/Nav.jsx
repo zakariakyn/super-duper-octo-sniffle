@@ -7,16 +7,38 @@ const SERVICE_LINKS = [
   { label: 'Sonorisation', page: 'sonorisation' }, { label: 'Décoration', page: 'decoration' },
 ];
 
+/* Section IDs for scroll anchoring on home page */
+const SECTION_IDS = {
+  events: 'events-section',
+  services: 'services-section',
+};
+
 /* ─ Desktop hover dropdown ─ */
-function NavItem({ label, page, isActive, hasDropdown, dropItems, navigate }) {
+function NavItem({ label, page, isActive, hasDropdown, dropItems, navigate, currentPage }) {
   const [hover, setHover] = useState(false);
   const closeTimer = useRef(null);
   const open  = () => { clearTimeout(closeTimer.current); setHover(true); };
   const close = () => { closeTimer.current = setTimeout(() => setHover(false), 140); };
 
+  const handleParentClick = () => {
+    /* For "events"/"services": scroll to section on home page instead of navigating to overview page */
+    if (hasDropdown && SECTION_IDS[page]) {
+      if (currentPage === 'home') {
+        const el = document.getElementById(SECTION_IDS[page]);
+        if (el) { el.scrollIntoView({ behavior: 'smooth' }); setHover(false); return; }
+      }
+      /* If not on home page, navigate home then the App will scroll */
+      navigate('home', SECTION_IDS[page]);
+      setHover(false);
+      return;
+    }
+    navigate(page);
+    setHover(false);
+  };
+
   return (
     <li style={{ position: 'relative' }} onMouseEnter={hasDropdown ? open : undefined} onMouseLeave={hasDropdown ? close : undefined}>
-      <a className={isActive ? 'active' : ''} onClick={() => { navigate(page); setHover(false); }}
+      <a className={isActive ? 'active' : ''} onClick={handleParentClick}
         style={{ userSelect: 'none', display: 'flex', alignItems: 'center', gap: '3px', cursor: 'pointer' }}>
         {label}
         {hasDropdown && <span style={{ fontSize: '0.52rem', transition: 'transform 0.2s', display: 'inline-block', transform: hover ? 'rotate(180deg)' : 'none' }}>▾</span>}
@@ -40,13 +62,29 @@ function NavItem({ label, page, isActive, hasDropdown, dropItems, navigate }) {
 }
 
 /* ─ Mobile: parent nav link + collapse sub-items ─ */
-function MobileNavGroup({ parentLabel, parentPage, items, navigate, close }) {
+function MobileNavGroup({ parentLabel, parentPage, items, navigate, close, currentPage }) {
   const [expanded, setExpanded] = useState(false);
+
+  const handleParentClick = () => {
+    /* Scroll to section on home page instead of navigating to overview page */
+    if (SECTION_IDS[parentPage]) {
+      if (currentPage === 'home') {
+        const el = document.getElementById(SECTION_IDS[parentPage]);
+        if (el) { el.scrollIntoView({ behavior: 'smooth' }); close(); return; }
+      }
+      navigate('home', SECTION_IDS[parentPage]);
+      close();
+      return;
+    }
+    navigate(parentPage);
+    close();
+  };
+
   return (
     <div>
-      {/* Row: click label → navigate & close; click ▾ → expand sub-items */}
+      {/* Row: click label → scroll to section & close; click ▾ → expand sub-items */}
       <div style={{ display: 'flex', alignItems: 'center', borderBottom: '1px solid rgba(184,146,42,0.1)' }}>
-        <div onClick={() => { navigate(parentPage); close(); }}
+        <div onClick={handleParentClick}
           style={{ flex: 1, padding: '1rem 0', fontSize: '0.72rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: DARK, cursor: 'pointer', fontWeight: 500 }}>
           {parentLabel}
         </div>
@@ -98,18 +136,24 @@ export default function Nav({ currentPage, navigate, mobileOpen, setMobileOpen }
           </div>
 
           <ul className="nav-links">
-            {NAV_ITEMS.map(({ label, page }) => {
-              const isActive = currentPage === page
-                || (page === 'events'   && ['soiree','mariage'].includes(currentPage))
-                || (page === 'services' && ['eclairage','structure','sonorisation','decoration'].includes(currentPage));
-              const hasDrop = page === 'events' || page === 'services';
+            {NAV_ITEMS.filter(({ page }) => page !== 'events' && page !== 'services').map(({ label, page }) => {
+              const isActive = currentPage === page;
               return (
                 <NavItem key={page} label={label} page={page} isActive={isActive}
-                  hasDropdown={hasDrop}
-                  dropItems={page === 'events' ? EVENT_LINKS : page === 'services' ? SERVICE_LINKS : []}
-                  navigate={navigate} />
+                  hasDropdown={false} dropItems={[]}
+                  navigate={navigate} currentPage={currentPage} />
               );
             })}
+            {/* Events dropdown (no "Tous Événements" link) */}
+            <NavItem label="Événements" page="events"
+              isActive={['events','soiree','mariage'].includes(currentPage)}
+              hasDropdown dropItems={EVENT_LINKS}
+              navigate={navigate} currentPage={currentPage} />
+            {/* Services dropdown (no "Tous Services" link) */}
+            <NavItem label="Services" page="services"
+              isActive={['services','eclairage','structure','sonorisation','decoration'].includes(currentPage)}
+              hasDropdown dropItems={SERVICE_LINKS}
+              navigate={navigate} currentPage={currentPage} />
           </ul>
 
           <button className="hamburger" onClick={() => setMobileOpen(o => !o)} aria-label="Menu">
@@ -144,9 +188,9 @@ export default function Nav({ currentPage, navigate, mobileOpen, setMobileOpen }
             Accueil
           </div>
 
-          {/* Événements: clicking label → navigate('events') + close; ▾ expands sub-items */}
-          <MobileNavGroup parentLabel="Événements" parentPage="events" items={EVENT_LINKS}   navigate={navigate} close={close} />
-          <MobileNavGroup parentLabel="Services"   parentPage="services" items={SERVICE_LINKS} navigate={navigate} close={close} />
+          {/* Événements: clicking label → scroll to section & close; ▾ expands sub-items */}
+          <MobileNavGroup parentLabel="Événements" parentPage="events" items={EVENT_LINKS}   navigate={navigate} close={close} currentPage={currentPage} />
+          <MobileNavGroup parentLabel="Services"   parentPage="services" items={SERVICE_LINKS} navigate={navigate} close={close} currentPage={currentPage} />
 
           {[{ label: 'Témoignages', page: 'testimonials' }, { label: 'Contactez-nous', page: 'contact' }].map(({ label, page }) => (
             <div key={page} onClick={() => { navigate(page); close(); }}
