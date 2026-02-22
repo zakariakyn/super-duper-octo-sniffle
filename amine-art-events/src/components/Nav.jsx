@@ -16,7 +16,7 @@ function NavItem({ label, page, isActive, hasDropdown, dropItems, navigate }) {
 
   return (
     <li style={{ position: 'relative' }} onMouseEnter={hasDropdown ? open : undefined} onMouseLeave={hasDropdown ? close : undefined}>
-      <a className={isActive ? 'active' : ''} onClick={() => { navigate(page); setHover(false); }}
+      <a className={isActive ? 'active' : ''} onClick={() => { if (!hasDropdown) navigate(page); setHover(false); }}
         style={{ userSelect: 'none', display: 'flex', alignItems: 'center', gap: '3px', cursor: 'pointer' }}>
         {label}
         {hasDropdown && <span style={{ fontSize: '0.52rem', transition: 'transform 0.2s', display: 'inline-block', transform: hover ? 'rotate(180deg)' : 'none' }}>▾</span>}
@@ -40,18 +40,23 @@ function NavItem({ label, page, isActive, hasDropdown, dropItems, navigate }) {
 }
 
 /* ─ Mobile: parent nav link + collapse sub-items ─ */
-function MobileNavGroup({ parentLabel, parentPage, items, navigate, close }) {
+function MobileNavGroup({ parentLabel, items, navigate, close }) {
   const [expanded, setExpanded] = useState(false);
   return (
     <div>
-      {/* Row: click label → navigate & close; click ▾ → expand sub-items */}
-      <div style={{ display: 'flex', alignItems: 'center', borderBottom: '1px solid rgba(184,146,42,0.1)' }}>
-        <div onClick={() => { navigate(parentPage); close(); }}
-          style={{ flex: 1, padding: '1rem 0', fontSize: '0.72rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: DARK, cursor: 'pointer', fontWeight: 500 }}>
+      {/* Row: click label or ▾ → expand/collapse sub-items */}
+      <div
+        onClick={() => setExpanded(e => !e)}
+        role="button"
+        tabIndex={0}
+        onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setExpanded(ex => !ex); } }}
+        style={{ display: 'flex', alignItems: 'center', borderBottom: '1px solid rgba(184,146,42,0.1)', cursor: 'pointer' }}>
+        <div
+          style={{ flex: 1, padding: '1rem 0', fontSize: '0.72rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: DARK, fontWeight: 500 }}>
           {parentLabel}
         </div>
-        <div onClick={() => setExpanded(e => !e)}
-          style={{ padding: '1rem 0.3rem', cursor: 'pointer', color: GOLD, fontSize: '0.68rem', transition: 'transform 0.25s', transform: expanded ? 'rotate(180deg)' : 'none', display: 'inline-block', userSelect: 'none' }}>
+        <div
+          style={{ padding: '1rem 0.3rem', color: GOLD, fontSize: '0.68rem', transition: 'transform 0.25s', transform: expanded ? 'rotate(180deg)' : 'none', display: 'inline-block', userSelect: 'none' }}>
           ▾
         </div>
       </div>
@@ -145,8 +150,8 @@ export default function Nav({ currentPage, navigate, mobileOpen, setMobileOpen }
           </div>
 
           {/* Événements: clicking label → navigate('events') + close; ▾ expands sub-items */}
-          <MobileNavGroup parentLabel="Événements" parentPage="events" items={EVENT_LINKS}   navigate={navigate} close={close} />
-          <MobileNavGroup parentLabel="Services"   parentPage="services" items={SERVICE_LINKS} navigate={navigate} close={close} />
+          <MobileNavGroup parentLabel="Événements" items={EVENT_LINKS}   navigate={navigate} close={close} />
+          <MobileNavGroup parentLabel="Services"   items={SERVICE_LINKS} navigate={navigate} close={close} />
 
           {[{ label: 'Témoignages', page: 'testimonials' }, { label: 'Contactez-nous', page: 'contact' }].map(({ label, page }) => (
             <div key={page} onClick={() => { navigate(page); close(); }}
