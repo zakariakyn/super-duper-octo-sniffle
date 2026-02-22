@@ -85,6 +85,12 @@ export default function Nav({ currentPage, navigate, mobileOpen, setMobileOpen }
   }, [mobileOpen]);
 
   useEffect(() => {
+    const onResize = () => { if (window.innerWidth > 768) setMobileOpen(false); };
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, [setMobileOpen]);
+
+  useEffect(() => {
     document.body.style.overflow = mobileOpen ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
   }, [mobileOpen]);

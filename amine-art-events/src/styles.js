@@ -519,6 +519,11 @@ export const globalStyles = `
     }
     .overlap-wrap > div { min-height: auto !important; padding: 2rem 1.5rem !important; }
 
+    /* Reset event-card-normal on mobile so Mariage matches Soirée layout */
+    .event-card.event-card-normal { grid-template-columns: 1fr !important; }
+    .event-card.event-card-normal .event-image { order: 0 !important; margin-right: 0 !important; margin-left: 0 !important; }
+    .event-card.event-card-normal .event-info  { order: 1 !important; padding: 2rem 1.5rem !important; }
+
     .footer-top { grid-template-columns: 1fr; }
     .footer-bottom { flex-direction: column; text-align: center; }
     .footer-links-grid { grid-template-columns: 1fr 1fr; }
