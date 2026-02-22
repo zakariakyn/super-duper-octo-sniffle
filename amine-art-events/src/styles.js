@@ -376,7 +376,7 @@ export const globalStyles = `
   footer { background: ${DARK}; padding: 4rem 2.5rem 2.5rem; }
   .footer-inner { max-width: 1300px; margin: 0 auto; }
   .footer-top {
-    display: grid; grid-template-columns: 1fr 2fr; gap: 4rem;
+    display: grid; grid-template-columns: 1.1fr 1.6fr 1fr; gap: 4rem;
     padding-bottom: 3rem; border-bottom: 1px solid rgba(255,255,255,0.08); margin-bottom: 2.5rem;
   }
   .footer-brand {}
