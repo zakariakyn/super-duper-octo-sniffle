@@ -5,6 +5,8 @@ export const CREAM      = '#F9F4ED';
 export const DARK       = '#1a1510';
 export const CARD_BG    = '#C4943A';
 
+export const CONTACT_EMAIL = 'contact@amineartevents.com';
+
 export const NAV_ITEMS = [
   { label: 'Accueil',        page: 'home' },
   { label: 'Événements',     page: 'events' },

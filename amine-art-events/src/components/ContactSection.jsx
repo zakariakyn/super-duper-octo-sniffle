@@ -1,20 +1,29 @@
 import { useState } from 'react';
-import { GOLD, DARK } from '../constants';
+import { GOLD, DARK, CONTACT_EMAIL } from '../constants';
 import ScrollReveal from './ScrollReveal';
 
 const IG = 'https://www.instagram.com/amine.art.events/';
 const WA = 'https://wa.me/212662115574';
 
 export default function ContactSection() {
-  const [form, setForm] = useState({ name: '', email: '', message: '' });
-  const [sent, setSent] = useState(false);
+  const [form, setForm]     = useState({ name: '', email: '', message: '' });
+  const [errors, setErrors] = useState({});
+
+  const validate = () => {
+    const e = {};
+    if (!form.name.trim())    e.name    = 'Veuillez entrer votre nom.';
+    if (!form.email.trim())   e.email   = 'Veuillez entrer votre email.';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email = 'Adresse email invalide.';
+    if (!form.message.trim()) e.message = 'Veuillez entrer votre message.';
+    return e;
+  };
 
   const handleSend = () => {
-    if (form.name && form.email && form.message) {
-      setSent(true);
-      setTimeout(() => setSent(false), 3500);
-      setForm({ name: '', email: '', message: '' });
-    }
+    const e = validate();
+    if (Object.keys(e).length) { setErrors(e); return; }
+    setErrors({});
+    const mailto = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent('Message de ' + form.name)}&body=${encodeURIComponent('Nom: ' + form.name + '\nEmail: ' + form.email + '\n\n' + form.message)}`;
+    window.location.href = mailto;
   };
 
   return (
@@ -56,19 +65,22 @@ export default function ContactSection() {
 
         <ScrollReveal direction="right" delay={120}>
           <div className="contact-right">
-            {sent ? (
-              <div className="form-success">✓ Message envoyé avec succès!</div>
-            ) : (
-              <>
-                <div className="form-row">
+              <div className="form-row">
+                <div style={{ flex: 1 }}>
                   <input className="form-input" placeholder="Votre nom" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />
-                  <input className="form-input" placeholder="Votre email" type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
+                  {errors.name    && <div style={{ color: '#c0392b', fontSize: '0.65rem', marginTop: '0.3rem' }}>{errors.name}</div>}
                 </div>
+                <div style={{ flex: 1 }}>
+                  <input className="form-input" placeholder="Votre email" type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
+                  {errors.email   && <div style={{ color: '#c0392b', fontSize: '0.65rem', marginTop: '0.3rem' }}>{errors.email}</div>}
+                </div>
+              </div>
+              <div>
                 <textarea className="form-input form-textarea" placeholder="Votre message" value={form.message} onChange={e => setForm({ ...form, message: e.target.value })} />
-                <button className="form-btn" onClick={handleSend}>Envoyer le message</button>
-              </>
-            )}
-          </div>
+                {errors.message && <div style={{ color: '#c0392b', fontSize: '0.65rem', marginTop: '0.3rem' }}>{errors.message}</div>}
+              </div>
+              <button className="form-btn" onClick={handleSend}>Envoyer le message</button>
+            </div>
         </ScrollReveal>
       </div>
     </div>
