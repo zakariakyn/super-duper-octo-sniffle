@@ -2,13 +2,13 @@ import { useState, useEffect, useRef } from 'react';
 import { GOLD, IMAGES } from '../constants';
 
 const SLIDES = [
-  { img: IMAGES.heroWedding, title: 'Mariages',   sub: 'Magiques',     desc: 'Des cérémonies inoubliables' },
-  { img: IMAGES.heroDecor,   title: 'Décoration', sub: 'Élégante',     desc: 'Des espaces transformés'    },
-  { img: IMAGES.heroSoiree,  title: 'Soirées',    sub: 'Inoubliables', desc: 'Des moments de lumière'     },
-  { img: IMAGES.heroLight,   title: 'Éclairage',  sub: 'Artistique',   desc: 'La lumière qui sublime'     },
+  { img: IMAGES.heroWedding, title: 'Mariages',   sub: 'Magiques',     desc: 'Des cérémonies inoubliables', scrollTo: 'events-section'   },
+  { img: IMAGES.heroDecor,   title: 'Décoration', sub: 'Élégante',     desc: 'Des espaces transformés',    scrollTo: 'services-section' },
+  { img: IMAGES.heroSoiree,  title: 'Soirées',    sub: 'Inoubliables', desc: 'Des moments de lumière',     scrollTo: 'events-section'   },
+  { img: IMAGES.heroLight,   title: 'Éclairage',  sub: 'Artistique',   desc: 'La lumière qui sublime',     scrollTo: 'services-section' },
 ];
 
-export default function HeroSlider({ navigate }) {
+export default function HeroSlider({ navigate, scrollToSection }) {
   const [current, setCurrent] = useState(0);
   const [fading, setFading]   = useState(false);
   const touchX = useRef(null);
@@ -82,7 +82,7 @@ export default function HeroSlider({ navigate }) {
             {s.desc}
           </p>
           <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', justifyContent: 'center' }}>
-            <button className="btn-primary" onClick={() => navigate('events')}>Nos Événements</button>
+            <button className="btn-primary" onClick={() => scrollToSection(s.scrollTo)}>Découvrir {s.title}</button>
             <button className="btn-outline"  onClick={() => navigate('contact')}>Contactez-nous</button>
           </div>
         </div>

@@ -6,9 +6,13 @@ import Footer from '../components/Footer';
 import ScrollReveal from '../components/ScrollReveal';
 
 export default function HomePage({ navigate }) {
+  const scrollToSection = (id) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
     <>
-      <HeroSlider navigate={navigate} />
+      <HeroSlider navigate={navigate} scrollToSection={scrollToSection} />
       <div style={{ height: 2, background: 'rgba(184,146,42,0.14)' }} />
 
       {/* ── Events — Canva overlap style ─────────────────── */}
@@ -19,7 +23,7 @@ export default function HomePage({ navigate }) {
         to have image on LEFT by giving Mariage class "event-card force-normal"
         and overriding nth-child even rule.
       */}
-      <div className="events-grid">
+      <div className="events-grid" id="events-section">
         {[
           {
             title: 'Soirée', img: IMAGES.soiree, page: 'soiree',
@@ -51,7 +55,7 @@ export default function HomePage({ navigate }) {
       </div>
 
       {/* ── Services ── */}
-      <div style={{ background: '#faf7f2', padding: '6rem 0 5rem' }}>
+      <div style={{ background: '#faf7f2', padding: '6rem 0 5rem' }} id="services-section">
         <div className="section" style={{ paddingTop: 0, paddingBottom: '2rem' }}>
           <ScrollReveal>
             <div className="section-label">Notre expertise</div>
